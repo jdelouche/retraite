@@ -8,7 +8,6 @@ jptrim0::Int;          jptrim0      = 137
 jptrim0usa::Int;       jptrim0usa   = jptrim0+jptrimusa
 jotrim0::Int;          jotrim0      = 162
 jpcohpoints ::[Double];jpcohpoints  = [727.06,741.69,762.49,818.95,776.96,791.07,766.69]
-avg ::[Double]->Double;  avg  l = (sum l)/(fromIntegral (length l))
 jpcotrimpts ::Double;  jpcotrimpts  = (avg jpcohpoints)
 jocohpoints ::[Double];jocohpoints  = [2882.49,2939.69,2564.36,2394.77+175.05,2394.77,2186.97,1952.32,1575.01+515.85]
 jocotrimpts::Double; jocotrimpts = (avg jocohpoints)
@@ -16,7 +15,6 @@ jpcot0      ::Double;  jpcot0       = 22148.52
 jocot0      ::Double;  jocot0       = 61402.48
 -- cap         ::Double->Double->Double;        cap trim0 cot0 t    = cot0 + ((t-trim0) * cotrimpoints)
 -- valcomp     ::(Double->Double)->Int->Double; valcomp cap n       = comp (cap (fromIntegral n)) n
--- rgtaux      ::Int->Double;                   rgtaux n            = 0.5 - (fromIntegral(n)*(0.00625))
 -- rg          ::Int->Double;                   rg n                = 12*rgplafond * (rgtaux n) * (167-fromIntegral(n))/167
 -- retraite    ::Double-> Int -> Double;        retraite cap manque = (rg manque) + (comp cap manque)
 -- test1 = (cap jptrim0usa jpcot0 jptrim0usa) == (22148.52)
@@ -28,12 +26,17 @@ tests = and [
         test4,
         test5,
         test6,
+        test7,
+        test8,
+        test9,
+        test10,
+        test11,
+        test12,
+        test13,
+        test14,
         True
         ]
-cotaux      ::Int->Double;                   cotaux n
-                                                    | n >  20            = 0.78
-                                                    | n <  0             = 1
-                                                    | otherwise          = cohistotaux!!(20-n)
+cotaux::Int->Double; cotaux n | n >  20 = 0.78 | n <  0 = 1 | otherwise = cohistotaux!!(20-n)
 test1 = (cotaux (-1)) == 1
 test2 = (cotaux 0)  == 1
 test3 = (cotaux 20) == 0.78
@@ -45,3 +48,15 @@ test6 = (cotaux (rgtrim - jotrim61)) == 1
 capjp63 = jpcot0 + 13 * jpcotrimpts
 cap::Double->Double->Double->Double; cap pts t0 n = t0 + n * pts
 test7 = (cap jpcotrimpts jpcot0 13) == capjp63
+capjo63 = jocot0 + 12 * jocotrimpts
+test8 = (cap jocotrimpts jocot0 12) == capjo63
+avg ::[Double]->Double; avg  l = (sum l)/(fromIntegral (length l))
+test9 = (avg [1,1,1] == 1)
+test10 = (avg [1,2,3] == 2)
+rgtaux::Int->Double; rgtaux n | n > 20 = 0.375 | n < 0 = 0.5 | otherwise = 0.5 - (fromIntegral(n)*(0.00625))
+test11 = (rgtaux (-1) == 0.5)
+test12 = (rgtaux 0  == 0.5)
+test13 = (rgtaux 20 == 0.375)
+test14 = (rgtaux 21 == 0.375)
+rgjp63 = rgplafond * (rgtaux (167 - jptrim63)) * fromIntegral(jptrim63) / 167
+rg trim = rgplafond * (rgtaux (rgtrim - jptrim63)) * fromIntegral(jptrim63) / rgtrim
