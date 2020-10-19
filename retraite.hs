@@ -59,4 +59,4 @@ test12 = (rgtaux 0  == 0.5)
 test13 = (rgtaux 20 == 0.375)
 test14 = (rgtaux 21 == 0.375)
 rgjp63 = rgplafond * (rgtaux (167 - jptrim63)) * fromIntegral(jptrim63) / 167
-rg trim = rgplafond * (rgtaux (rgtrim - jptrim63)) * fromIntegral(jptrim63) / rgtrim
+rg trim = rgplafond * (rgtaux (rgtrim - trim)) * fromIntegral(trim) / fromIntegral(rgtrim)
